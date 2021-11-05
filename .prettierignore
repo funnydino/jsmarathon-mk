@@ -1,0 +1,13 @@
+dist
+
+*.html
+
+**/*.js
+
+!src/**/*.js
+
+*.md
+
+*.json
+
+.prettierrc
