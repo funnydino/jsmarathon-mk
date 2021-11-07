@@ -1,0 +1,58 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: "Intro", sans-serif;
+  color: var(--color-dark);
+  background-color: var(--color-light-gray);
+  scroll-behavior: smooth;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+.btn-reset {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.container {
+  padding: 0 15px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+.list-reset {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.site-container {
+  overflow: hidden;
+}
+
+body {
+  /* background-color: red; */
+  background-image: url('../img/2.png');
+}
