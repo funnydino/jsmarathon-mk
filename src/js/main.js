@@ -6,4 +6,4 @@ import '../style.css';
 
 import '../index.html';
 
-console.log('Hello, world!');
+console.log('Fight!');

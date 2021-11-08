@@ -1,4 +1,6 @@
 html {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -9,9 +11,9 @@ html {
 }
 
 body {
-  font-family: "Intro", sans-serif;
+  font-family: 'MortalKombat3', sans-serif;
   color: var(--color-dark);
-  background-color: var(--color-light-gray);
+  background-color: var(--color-mk-dark);
   scroll-behavior: smooth;
 }
 
@@ -50,9 +52,4 @@ img {
 
 .site-container {
   overflow: hidden;
-}
-
-body {
-  /* background-color: red; */
-  background-image: url('../img/2.png');
 }
