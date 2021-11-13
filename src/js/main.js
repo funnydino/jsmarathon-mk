@@ -63,5 +63,3 @@ const createPlayer = (playerObj) => {
 
 $arenas.appendChild(createPlayer(player1));
 $arenas.appendChild(createPlayer(player2));
-
-console.log('Fight');
