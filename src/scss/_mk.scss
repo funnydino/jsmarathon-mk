@@ -235,6 +235,23 @@
   top: 1px;
 }
 
+.button:disabled {
+  opacity: .5;
+  pointer-events: none;
+}
+
+.reloadWrap {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  z-index: 1000;
+}
+
+.reloadWrap .button {
+  margin-top: 0;
+}
+
 .loseTitle {
   position: absolute;
   top: 25%;
