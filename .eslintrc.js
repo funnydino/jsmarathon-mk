@@ -14,5 +14,6 @@ module.exports = {
     'no-param-reassign': ["error", { "props": false }],
     'no-unused-expressions': ["error", { "allowTernary": true }],
     'max-len': ["error", { "code": 130 }],
+    'no-restricted-syntax': ["error", "FunctionExpression", "WithStatement", "BinaryExpression[operator='in']"],
   },
 };
