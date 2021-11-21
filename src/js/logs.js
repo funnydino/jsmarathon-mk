@@ -1,8 +1,11 @@
 /* eslint-disable */
 
 const logs = {
-  start: [`Часы показывали <span class="battle-log__time">${new Date().toLocaleTimeString('ru-RU')}</span>, когда <span class="battle-log__name">[player1]</span> и <span class="battle-log__name">[player2]</span> бросили вызов друг другу.`,
-],
+  start: [
+    `Часы показывали <span class="battle-log__time">${new Date().toLocaleTimeString(
+      'ru-RU',
+    )}</span>, когда <span class="battle-log__name">[player1]</span> и <span class="battle-log__name">[player2]</span> бросили вызов друг другу.`,
+  ],
   end: [
     'Результат удара <span class="battle-log__player-wins">[playerWins]</span>: <span class="battle-log__player-lose">[playerLose]</span> - труп',
     '<span class="battle-log__player-lose">[playerLose]</span> погиб от удара бойца <span class="battle-log__player-wins">[playerWins]</span>',
@@ -36,9 +39,9 @@ const logs = {
     '<span class="battle-log__name-kick">[playerKick]</span> старался провести удар, но непобедимый <span class="battle-log__name-defence">[playerDefence]</span> ушел в сторону от удара копчиком прямо в пятку.',
     '<span class="battle-log__name-kick">[playerKick]</span> обманулся и жестокий <span class="battle-log__name-defence">[playerDefence]</span> блокировал удар стопой в солнечное сплетение.',
     '<span class="battle-log__name-kick">[playerKick]</span> не думал о бое, потому расстроенный <span class="battle-log__name-defence">[playerDefence]</span> отпрыгнул от удара кулаком куда обычно не бьют.',
-    '<span class="battle-log__name-kick">[playerKick]</span> обманулся и жестокий <span class="battle-log__name-defence">[playerDefence]</span> блокировал удар стопой в солнечное сплетение.'
+    '<span class="battle-log__name-kick">[playerKick]</span> обманулся и жестокий <span class="battle-log__name-defence">[playerDefence]</span> блокировал удар стопой в солнечное сплетение.',
   ],
-  draw: 'Ничья - это тоже победа!'
+  draw: 'Ничья - это тоже победа!',
 };
 
 export default logs;

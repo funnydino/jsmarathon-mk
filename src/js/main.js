@@ -170,9 +170,7 @@ function generateLogs(type, playerOne, playerTwo, damage) {
   let text = logs[type][getRandom(logs[type].length - 1)];
   switch (type) {
     case 'start':
-      text = text
-        .replace('[player1]', player1.name)
-        .replace('[player2]', player2.name);
+      text = text.replace('[player1]', player1.name).replace('[player2]', player2.name);
       break;
     case 'end':
       text = `<span class="battle-log__time">${currentTime}</span>. ${text
@@ -190,6 +188,9 @@ function generateLogs(type, playerOne, playerTwo, damage) {
       text = `<span class="battle-log__time">${currentTime}</span>. ${text
         .replace('[playerDefence]', playerTwo.name)
         .replace('[playerKick]', playerOne.name)}`;
+      break;
+    case 'draw':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text}`;
       break;
     default:
       console.log('Не удалось распознать команду :(');

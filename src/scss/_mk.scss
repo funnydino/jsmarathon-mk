@@ -397,7 +397,7 @@ input[type='radio']:checked + label > span:hover {
   &__name-defence,
   &__name-kick,
   &__player-lose {
-    color: var(--color-mk-red)
+    color: var(--color-mk-red);
   }
 
   &__player-wins,
