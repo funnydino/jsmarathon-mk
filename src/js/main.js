@@ -1,5 +1,7 @@
 import '../../node_modules/focus-visible/dist/focus-visible';
 
+import logs from './logs';
+
 import '../scss/main.scss';
 
 import '../style.css';
@@ -8,6 +10,7 @@ import '../index.html';
 
 const $arenas = document.querySelector('.arenas');
 const $formFight = document.querySelector('.control');
+const $chat = document.querySelector('.chat');
 const $randomButton = document.querySelector('.fight-button');
 
 const HIT = {
@@ -38,7 +41,7 @@ function getDamage(damage) {
   this.renderHP();
 }
 
-function playerAttack() {
+function attack() {
   console.log(`${this.name} fight...`);
 }
 
@@ -52,7 +55,7 @@ const player1 = {
   elHP,
   renderHP,
   getDamage,
-  playerAttack,
+  attack,
 };
 
 const player2 = {
@@ -65,7 +68,7 @@ const player2 = {
   elHP,
   renderHP,
   getDamage,
-  playerAttack,
+  attack,
 };
 
 function createElement(tag, className) {
@@ -132,9 +135,6 @@ function getRandom(num) {
   return Math.ceil(Math.random() * num);
 }
 
-$arenas.appendChild(createPlayer(player1));
-$arenas.appendChild(createPlayer(player2));
-
 function enemyAttack() {
   const hit = ATTACK[getRandom(3) - 1];
   const defence = ATTACK[getRandom(3) - 1];
@@ -146,34 +146,59 @@ function enemyAttack() {
   };
 }
 
-$formFight.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const enemy = enemyAttack();
-  const attack = {};
+function playerAttack() {
+  const attackPlayer = {};
 
   for (const item of $formFight) {
     if (item.checked && item.name === 'hit') {
-      attack.value = getRandom(HIT[item.value]);
-      attack.hit = item.value;
+      attackPlayer.value = getRandom(HIT[item.value]);
+      attackPlayer.hit = item.value;
     }
 
     if (item.checked && item.name === 'defence') {
-      attack.defence = item.value;
+      attackPlayer.defence = item.value;
     }
 
     item.checked = false;
   }
 
-  if (attack.hit !== enemy.defence) {
-    player2.getDamage(attack.value);
-    console.log(`${player1.name} наносит ${attack.value} урон!`);
-  }
+  return attackPlayer;
+}
 
-  if (attack.defence !== enemy.hit) {
-    player1.getDamage(enemy.value);
-    console.log(`${player2.name} наносит ${enemy.value} урон!`);
+function generateLogs(type, playerOne, playerTwo, damage) {
+  const currentTime = `[${new Date().toLocaleTimeString('ru-RU')}]`;
+  let text = logs[type][getRandom(logs[type].length - 1)];
+  switch (type) {
+    case 'start':
+      text = text
+        .replace('[player1]', player1.name)
+        .replace('[player2]', player2.name);
+      break;
+    case 'end':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text
+        .replace('[playerWins]', playerOne.name)
+        .replace('[playerLose]', playerTwo.name)}`;
+      break;
+    case 'hit':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text
+        .replace('[playerDefence]', playerTwo.name)
+        .replace('[playerKick]', playerOne.name)}
+        <span class="battle-log__damage">[-${damage}]</span>
+        <span class="battle-log__player-hp">[${playerTwo.hp}/100]</span>`;
+      break;
+    case 'defence':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text
+        .replace('[playerDefence]', playerTwo.name)
+        .replace('[playerKick]', playerOne.name)}`;
+      break;
+    default:
+      console.log('Не удалось распознать команду :(');
   }
+  const el = `<p class="battle-log">${text}</p>`;
+  $chat.insertAdjacentHTML('afterbegin', el);
+}
 
+function showResult() {
   if (player1.hp === 0 || player2.hp === 0) {
     $randomButton.disabled = true;
     createReloadButton();
@@ -181,12 +206,39 @@ $formFight.addEventListener('submit', (e) => {
 
   if (player1.hp === 0 && player1.hp < player2.hp) {
     $arenas.appendChild(showFightResult(player2.name));
+    generateLogs('end', player2, player1);
   } else if (player2.hp === 0 && player2.hp < player1.hp) {
     $arenas.appendChild(showFightResult(player1.name));
+    generateLogs('end', player1, player2);
   } else if (player1.hp === 0 && player2.hp === 0) {
     $arenas.appendChild(showFightResult());
+    generateLogs('draw');
+  }
+}
+
+$formFight.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const enemy = enemyAttack();
+  const player = playerAttack();
+
+  if (player.defence !== enemy.hit) {
+    player1.getDamage(enemy.value);
+    generateLogs('hit', player2, player1, enemy.value);
+  } else if (player.defence === enemy.hit) {
+    generateLogs('defence', player2, player1);
   }
 
-  console.log('attack', attack);
-  console.log('enemy', enemy);
+  if (enemy.defence !== player.hit) {
+    player2.getDamage(player.value);
+    generateLogs('hit', player1, player2, player.value);
+  } else if (enemy.defence === player.hit) {
+    generateLogs('defence', player1, player2);
+  }
+
+  showResult();
 });
+
+$arenas.appendChild(createPlayer(player1));
+$arenas.appendChild(createPlayer(player2));
+
+generateLogs('start', player1.name, player2.name);
