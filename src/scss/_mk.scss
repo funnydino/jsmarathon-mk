@@ -121,7 +121,6 @@
 .name {
   position: absolute;
   top: 0;
-  font-family: 'MortalKombat3';
   font-size: 26px;
   line-height: 20px;
   letter-spacing: 2px;
@@ -138,12 +137,16 @@
 }
 
 .chat {
+  padding: 6px 40px;
   border-top: 4px solid var(--color-mk-yellow);
   width: 786px;
   height: 30vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-white);
   background-image: url(../img/versus.png);
   background-position: center;
   background-size: cover;
+  overflow: scroll;
 }
 
 .character {
@@ -162,13 +165,15 @@
 }
 
 .player2 .character img {
-  transform: scaleX(-1);
+  transform: scaleX(-1) translate(50%, 0);
 }
 
 .character img {
   position: absolute;
+  left: 50%;
   bottom: 0;
   height: 100%;
+  transform: translate(-50%, 0);
 }
 
 .fight {
@@ -183,18 +188,6 @@
 .fight img {
   width: 100%;
 }
-
-// .control {
-//   position: absolute;
-//   top: 50%;
-//   left: 50%;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 200px;
-//   transform: translate(-50%, -50%);
-//   z-index: 1000;
-// }
 
 .button {
   position: relative;
@@ -240,21 +233,32 @@
 }
 
 .button:disabled {
-  opacity: .9;
-  pointer-events: none;
+  opacity: 0.9;
   cursor: not-allowed;
 }
 
 .button:disabled:after {
-    opacity: .1;
+  opacity: 0.1;
 }
 
 .button:disabled:active {
-    top: 0px;
+  top: 0px;
 }
 
 .button:disabled:active::after {
-    top: 4px;
+  top: 4px;
+}
+
+.loseTitle {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  font-size: 36px;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-shadow: 2px 2px 2px var(--color-mk-red);
+  transform: translate(-50%, 0%);
+  z-index: 1000;
 }
 
 .reloadWrap {
@@ -269,32 +273,20 @@
   margin-top: 0;
 }
 
-.loseTitle {
-  position: absolute;
-  top: 25%;
-  left: 50%;
-  font-size: 36px;
-  text-transform: uppercase;
-  color: var(--color-white);
-  text-shadow: 2px 2px 2px var(--color-mk-red);
-  transform: translate(-50%, 0%);
-  z-index: 1000;
-}
-
-form:invalid button[class=button] {
-  opacity: .9;
+form:invalid button[class='button'] {
+  opacity: 0.9;
   cursor: not-allowed;
 }
 
-form:invalid button[class=button]:after {
-  opacity: .1;
+form:invalid button[class='button']:after {
+  opacity: 0.1;
 }
 
-form:invalid button[class=button]:active {
+form:invalid button[class='button']:active {
   top: 0px;
 }
 
-form:invalid button[class=button]:active::after {
+form:invalid button[class='button']:active::after {
   top: 4px;
 }
 
@@ -377,17 +369,44 @@ input {
   display: none;
 }
 
-input[type=radio]:checked + label > span {
-  color: #fff;
+input[type='radio']:checked + label > span {
+  color: var(--color-white);
   font-weight: 700;
   text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
-input[type=radio]:checked + label > span::before {
+input[type='radio']:checked + label > span::before {
   background: var(--color-mk-yellow);
   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.2);
 }
 
-input[type=radio]:checked + label > span:hover {
+input[type='radio']:checked + label > span:hover {
   background: none;
+}
+
+.battle-log {
+  &__time,
+  &__damage {
+    color: var(--color-mk-yellow);
+  }
+
+  &__name {
+    color: var(--color-mk-blue);
+  }
+
+  &__name-defence,
+  &__name-kick,
+  &__player-lose {
+    color: var(--color-mk-red);
+  }
+
+  &__player-wins,
+  &__player-lose {
+    font-weight: 500;
+  }
+
+  &__player-wins,
+  &__player-hp {
+    color: var(--color-mk-green);
+  }
 }
