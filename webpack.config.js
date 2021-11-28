@@ -20,6 +20,14 @@ const plugins = () => {
         collapseWhitespace: NODE_ENV === 'production',
       },
     }),
+    new HTMLWebpackPlugin({
+      template: path.resolve(__dirname, './src/arenas.html'),
+      filename: 'arenas.html',
+      favicon: './assets/favicon.ico',
+      minify: {
+        collapseWhitespace: NODE_ENV === 'production',
+      },
+    }),
     new MiniCssExtractPlugin({
       filename: `./css/${filename('css')}`,
     }),

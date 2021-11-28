@@ -1,46 +1,62 @@
 /* eslint-disable */
 
-function Player(playerAttr) {
-  this.player = playerAttr.player;
-  this.name = playerAttr.name;
-  this.hp = playerAttr.hp;
-  this.img = playerAttr.img;
-  this.weapon = playerAttr.weapon;
-  this.changeHP = function (num) {
+import { createElement } from './utils';
+
+class Player {
+  constructor(props) {
+    this.player = props.player;
+    this.name = props.name;
+    this.hp = props.hp;
+    this.img = props.img;
+    this.weapon = props.weapon;
+  }
+
+  changeHP(num) {
     this.hp -= num;
     if (this.hp <= 0) {
       this.hp = 0;
     }
-  };
-  this.elHP = function () {
+  }
+
+  elHP() {
     return document.querySelector(`.player${this.player} .life`);
-  };
-  this.renderHP = function () {
+  }
+
+  renderHP() {
     this.elHP().style.width = `${this.hp}%`;
-  };
-  this.getDamage = function (damage) {
+  }
+
+  getDamage(damage) {
     this.changeHP(damage);
     this.renderHP();
-  };
-  this.attack = function () {
+  }
+
+  createPlayer() {
+    const $player = createElement('div', `player${this.player}`);
+    const $progressbar = createElement('div', 'progressbar');
+    const $character = createElement('div', 'character-main');
+    const $life = createElement('div', 'life');
+    const $name = createElement('div', 'name');
+    const $img = createElement('img');
+
+    $name.innerText = this.name;
+    $life.style.width = `${this.hp}%`;
+    $img.setAttribute('src', this.img);
+
+    $progressbar.appendChild($name);
+    $progressbar.appendChild($life);
+
+    $character.appendChild($img);
+
+    $player.appendChild($progressbar);
+    $player.appendChild($character);
+
+    return $player;
+  }
+
+  attack() {
     console.log(`${this.name} fight...`);
-  };
+  }
 }
 
-const player1 = new Player({
-  player: 1,
-  name: 'Scorpion',
-  hp: 100,
-  img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-  weapon: ['fist', 'kick', 'grenade'],
-});
-
-const player2 = new Player({
-  player: 2,
-  name: 'Kitana',
-  hp: 100,
-  img: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',
-  weapon: ['hand', 'revolver', 'minigun'],
-});
-
-export { player1, player2 };
+export default Player;

@@ -1,6 +1,6 @@
-/* eslint-disable */
+/* eslint-disable max-len */
 
-const logs = {
+const LOGS = {
   start: [
     `Часы показывали <span class="battle-log__time">${new Date().toLocaleTimeString(
       'ru-RU',
@@ -41,7 +41,7 @@ const logs = {
     '<span class="battle-log__name-kick">[playerKick]</span> не думал о бое, потому расстроенный <span class="battle-log__name-defence">[playerDefence]</span> отпрыгнул от удара кулаком куда обычно не бьют.',
     '<span class="battle-log__name-kick">[playerKick]</span> обманулся и жестокий <span class="battle-log__name-defence">[playerDefence]</span> блокировал удар стопой в солнечное сплетение.',
   ],
-  draw: 'Ничья - это тоже победа!',
+  draw: ['Ничья - это тоже победа!'],
 };
 
-export default logs;
+export default LOGS;

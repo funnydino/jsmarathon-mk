@@ -1,10 +1,12 @@
+/* eslint-disable */
+
 import '../../node_modules/focus-visible/dist/focus-visible';
 
-import logs from './logs';
+import { getRandom, createElement } from './utils';
 
-import { player1, player2 } from './player';
+import Player from './player';
 
-import { getRandom, enemyAttack, playerAttack } from './attack';
+import LOGS from './constants';
 
 import '../scss/main.scss';
 
@@ -12,102 +14,97 @@ import '../style.css';
 
 import '../index.html';
 
+import '../arenas.html';
+
+import '../js/menu.js';
+
 const $arenas = document.querySelector('.arenas');
 const $formFight = document.querySelector('.control');
 const $chat = document.querySelector('.chat');
 
-const createElement = (tag, className) => {
-  const $tag = document.createElement(tag);
+let player1;
+let player2;
 
-  if (className) {
-    $tag.classList.add(className);
+class Game {
+  async getRandomPlayer() {
+    const body = fetch('https://reactmarathon-api.herokuapp.com/api/mk/player/choose', {
+      method: 'GET',
+    }).then((res) => res.json());
+
+    return body;
   }
 
-  return $tag;
-};
+  async start() {
+    // const p1 = JSON.parse(localStorage.getItem('player1'));
+    const p1 = await this.getRandomPlayer();
+    const p2 = await this.getRandomPlayer();
 
-const createPlayer = (playerObj) => {
-  const $player = createElement('div', `player${playerObj.player}`);
-  const $progressbar = createElement('div', 'progressbar');
-  const $character = createElement('div', 'character');
-  const $life = createElement('div', 'life');
-  const $name = createElement('div', 'name');
-  const $img = createElement('img');
+    player1 = new Player({
+      ...p1,
+      player: 1,
+      rootSelector: 'arenas',
+    });
 
-  $name.innerText = playerObj.name;
-  $life.style.width = `${playerObj.hp}%`;
-  $img.setAttribute('src', playerObj.img);
+    player2 = new Player({
+      ...p2,
+      player: 2,
+      rootSelector: 'arenas',
+    });
 
-  $progressbar.appendChild($name);
-  $progressbar.appendChild($life);
+    $arenas.appendChild(player1.createPlayer());
+    $arenas.appendChild(player2.createPlayer());
 
-  $character.appendChild($img);
-
-  $player.appendChild($progressbar);
-  $player.appendChild($character);
-
-  return $player;
-};
-
-const generateLogs = (type, playerOne, playerTwo, damage) => {
-  const currentTime = `[${new Date().toLocaleTimeString('ru-RU')}]`;
-  let text = logs[type][getRandom(logs[type].length - 1)];
-  switch (type) {
-    case 'start':
-      text = text.replace('[player1]', player1.name).replace('[player2]', player2.name);
-      break;
-    case 'end':
-      text = `<span class="battle-log__time">${currentTime}</span>. ${text
-        .replace('[playerWins]', playerOne.name)
-        .replace('[playerLose]', playerTwo.name)}`;
-      break;
-    case 'hit':
-      text = `<span class="battle-log__time">${currentTime}</span>. ${text
-        .replace('[playerDefence]', playerTwo.name)
-        .replace('[playerKick]', playerOne.name)}
-        <span class="battle-log__damage">[-${damage}]</span>
-        <span class="battle-log__player-hp">[${playerTwo.hp}/100]</span>`;
-      break;
-    case 'defence':
-      text = `<span class="battle-log__time">${currentTime}</span>. ${text
-        .replace('[playerDefence]', playerTwo.name)
-        .replace('[playerKick]', playerOne.name)}`;
-      break;
-    case 'draw':
-      text = `<span class="battle-log__time">${currentTime}</span>. ${text}`;
-      break;
-    default:
-      console.log('Не удалось распознать команду :(');
+    generateLogs('start', player1.name, player2.name);
   }
-  const el = `<p class="battle-log">${text}</p>`;
-  $chat.insertAdjacentHTML('afterbegin', el);
+}
+
+const playerAttack = () => {
+  const $formFight = document.querySelector('.control');
+  const attackPlayer = {};
+
+  for (const item of $formFight) {
+    const { checked, name, value } = item;
+    if (checked && name === 'hit') {
+      attackPlayer.hit = value;
+    }
+
+    if (checked && name === 'defence') {
+      attackPlayer.defence = value;
+    }
+
+    item.checked = false;
+  }
+
+  return attackPlayer;
 };
 
 const createReloadButton = () => {
   const $reloadWrap = createElement('div', 'reloadWrap');
   const $reloadButton = createElement('button', 'button');
 
-  $reloadButton.innerText = 'Restart';
+  $reloadButton.innerText = 'Menu';
 
   $reloadWrap.appendChild($reloadButton);
   $arenas.appendChild($reloadWrap);
 
   $reloadButton.addEventListener('click', () => {
-    window.location.reload();
+    setTimeout(() => {
+      window.location.pathname = './index.html';
+    }, 1000);
   });
 
   return $reloadWrap;
 };
 
 const showFightResult = (name) => {
-  const $loseTitle = createElement('div', 'loseTitle');
+  const $resultTitle = createElement('div', 'resultTitle');
   if (name) {
-    $loseTitle.innerText = `${name} wins!`;
+    $resultTitle.innerText = `${name} wins!`;
   } else {
-    $loseTitle.innerText = 'draw';
+    $resultTitle.innerText = 'draw';
   }
 
-  return $loseTitle;
+  return $resultTitle;
 };
 
 const showResult = () => {
@@ -130,29 +127,77 @@ const showResult = () => {
   }
 };
 
-$formFight.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const enemy = enemyAttack();
-  const player = playerAttack();
+const generateLogs = (type, { name } = {}, { name: playerTwoName, hp } = {}, damage) => {
+  const currentTime = `[${new Date().toLocaleTimeString('ru-RU')}]`;
+  let text = LOGS[type][getRandom(LOGS[type].length - 1)];
+  switch (type) {
+    case 'start':
+      text = text.replace('[player1]', player1.name).replace('[player2]', player2.name);
+      break;
+    case 'end':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text
+        .replace('[playerWins]', name)
+        .replace('[playerLose]', playerTwoName)}`;
+      break;
+    case 'hit':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text
+        .replace('[playerDefence]', playerTwoName)
+        .replace('[playerKick]', name)}
+        <span class="battle-log__damage">[-${damage}]</span>
+        <span class="battle-log__player-hp">[${hp}/100]</span>`;
+      break;
+    case 'defence':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text
+        .replace('[playerDefence]', playerTwoName)
+        .replace('[playerKick]', name)}`;
+      break;
+    case 'draw':
+      text = `<span class="battle-log__time">${currentTime}</span>. ${text}`;
+      break;
+    default:
+      console.log('Не удалось распознать команду :(');
+  }
+  const el = `<p class="battle-log">${text}</p>`;
+  $chat.insertAdjacentHTML('afterbegin', el);
+};
 
-  if (player.defence !== enemy.hit) {
-    player1.getDamage(enemy.value);
-    generateLogs('hit', player2, player1, enemy.value);
-  } else if (player.defence === enemy.hit) {
+const getFight = async (hit, defence) => {
+  const body = await fetch('http://reactmarathon-api.herokuapp.com/api/mk/player/fight', {
+    method: 'POST',
+    body: JSON.stringify({
+      hit,
+      defence,
+    }),
+  }).then((res) => res.json());
+
+  return body;
+};
+
+$formFight.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const { hit, defence } = playerAttack();
+  const { player1: player, player2: enemy } = await getFight(hit, defence);
+
+  const { hit: playerHit, defence: playerDefence, value: playerValue } = player;
+  const { hit: enemyHit, defence: enemyDefence, value: enemyValue } = enemy;
+
+  if (playerDefence !== enemyHit) {
+    player1.getDamage(enemyValue);
+    generateLogs('hit', player2, player1, enemyValue);
+  } else if (playerDefence === enemyHit) {
     generateLogs('defence', player2, player1);
   }
 
-  if (enemy.defence !== player.hit) {
-    player2.getDamage(player.value);
-    generateLogs('hit', player1, player2, player.value);
-  } else if (enemy.defence === player.hit) {
+  if (enemyDefence !== playerHit) {
+    player2.getDamage(playerValue);
+    generateLogs('hit', player1, player2, playerValue);
+  } else if (enemyDefence === playerHit) {
     generateLogs('defence', player1, player2);
   }
 
   showResult();
 });
 
-$arenas.appendChild(createPlayer(player1));
-$arenas.appendChild(createPlayer(player2));
-
-generateLogs('start', player1.name, player2.name);
+const game = new Game();
+game.start();
